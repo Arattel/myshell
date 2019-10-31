@@ -73,6 +73,7 @@ int process_one_character_argument(std::string& argument, ls_config& config){
     }
     else if(argument == "h"){
         config.show_help  = true;
+        return 0;
     }else{
         std::cerr << "Invalid argument: -" << argument;
         return 1;
