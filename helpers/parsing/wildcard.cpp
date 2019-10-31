@@ -19,15 +19,16 @@ bool is_wildcard(std::string string){
 int get_files_by_wildcard(std::string wildcard, std::vector<std::string>& result){
     std::string absolute_path, dir_path, word_dir;
     try{
+        std::string wildcard_abs;
         dir_path = getenv("PATH");
         word_dir = get_dirname(wildcard);
         get_absolute_path(word_dir, dir_path, absolute_path);
         auto files = list_files(absolute_path);
         wildcard = get_filename(wildcard);
-        for(int i = 0; i < files.size(); i++){
-            files[i] = get_filename(files[i]);
-        }
-        files = filter_files(files, wildcard);
+//        for(int i = 0; i < files.size(); i++){
+//            files[i] = get_filename(files[i]);
+//        }
+        files = filter_files(files, absolute_path + wildcard);
         if(files.empty()){
             return 1;
         } else{
