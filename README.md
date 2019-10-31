@@ -6,7 +6,8 @@ I used **docopt** sources of which were included.
 
 ### Mycat, myls
 
-To make mycat and myls  launchable, you need to use CMake from **/external_programs/mycat/CMakeLists.txt**
+To make mycat and myls  launchable, you need to use CMake from **/external_programs/mycat/CMakeLists.txt** and 
+**/external_programs/myls/CMakeLists.txt**
 
 ### This project 
 
