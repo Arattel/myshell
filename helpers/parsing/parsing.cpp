@@ -11,6 +11,7 @@
 
 
 
+
 std::string get_next_word(std::string& input_line, std::string& cropped){
     unsigned start, end;
     std::string first_word;

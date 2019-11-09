@@ -8,7 +8,7 @@
 #include <boost/regex.hpp>
 #include <fnmatch.h>
 #include <regex>
-
+#include <boost/algorithm/string.hpp>
 
 
 char ** strings_vector_to_char_arr(std::vector<std::string>& args){
@@ -28,7 +28,7 @@ bool is_assignment(std::string& arg){
 }
 
 bool is_reference(std::string& arg){
-    return substring_in_string(arg, "$");
+    return substring_in_string(arg, "$") && arg[arg.find_first_of("$") + 1] != '(';
 }
 
 bool is_number( std::string token )
@@ -55,4 +55,18 @@ std::vector<std::string> split(std::string mystring, std::string delimiter)
     }
 
     return subStringList;
+}
+
+bool is_command_for_variable(std::string& value){
+   std::regex reg{"\\$\\(.*\\)"};
+    return  std::regex_match(value, reg);
+}
+
+std::string trim_comment(std::string line){
+    if(substring_in_string(line, "#")){
+        unsigned comment_index = line.find_first_of("#");
+        return line.substr(0, comment_index);
+    } else{
+        return line;
+    }
 }

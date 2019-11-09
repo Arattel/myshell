@@ -54,13 +54,7 @@ std::vector<std::string> filter_files(std::vector<std::string>& files_list, std:
 }
 
 std::string read_file_into_string(int fd){
-
-    FILE *f = fdopen(fd, "r");
-    fseek(f, 0, SEEK_END);
-    long fsize = ftell(f);
-    fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
-
-    char *string = (char *) malloc(fsize + 1);
-    fread(string, 1, fsize, f);
+    char *string = (char *) malloc(4096);
+    read(fd, string, 4096);
     return std::string(string);
 }
