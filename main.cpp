@@ -36,16 +36,18 @@ int main(int argc, char** argv){
     std::set<std::string> global = {"PATH", "ERRNO", "DEFAULT_PATH"};
     if(argc > 1){
         execute_script(argv[1], global, local, cur_path);
-    }
-    char* buf;
+    } else{
+        char* buf;
 
-    while ((buf = readline((cur_path + " $").c_str())) != nullptr){
-        std::string input(buf);
-        if(strlen(buf) > 0){
-            add_history(input.c_str());
+        while ((buf = readline((cur_path + " $").c_str())) != nullptr){
+            std::string input(buf);
+            if(strlen(buf) > 0){
+                add_history(input.c_str());
+            }
+            execute_line(input, global, local, cur_path);
+            free(buf);
         }
-        execute_line(input, global, local, cur_path);
-        free(buf);
-    }
         return 0;
     }
+}
+

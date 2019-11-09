@@ -86,51 +86,53 @@ void execute_command(std::vector<std::string>& args, std::set<std::string>& glob
 void execute_line(std::string& input, std::set<std::string>& global, std::set<std::string>& local,
         std::string& cur_path){
     input = trim_comment(input);
-    if(substring_in_string(input, "|")){
-        execute_pipe(input, global,local, cur_path);
-    } else{
-        if(is_assignment(input)){
-            std::string varname, value;
-            split_assignment(input, varname, value);
-            if(is_command_for_variable(value)){
-                std::string command = value.substr(2, value.size() - 3);
+    if(boost::trim_copy(input).size() != 0){
+        if(substring_in_string(input, "|")){
+            execute_pipe(input, global,local, cur_path);
+        } else{
+            if(is_assignment(input)){
+                std::string varname, value;
+                split_assignment(input, varname, value);
+                if(is_command_for_variable(value)){
+                    std::string command = value.substr(2, value.size() - 3);
 
-                int saved_stdout  = dup(STDOUT_FILENO);
-                int fd[2];
-                pipe(fd);
-                int read_end = fd[0];
-                int write_end = fd[1];
-                dup2(write_end, STDOUT_FILENO);
+                    int saved_stdout  = dup(STDOUT_FILENO);
+                    int fd[2];
+                    pipe(fd);
+                    int read_end = fd[0];
+                    int write_end = fd[1];
+                    dup2(write_end, STDOUT_FILENO);
 
-                std::vector<std::string> command_args;
-                get_command_line_args(command, command_args);
-                execute_command(command_args, global, local, cur_path);
-                close(write_end);
+                    std::vector<std::string> command_args;
+                    get_command_line_args(command, command_args);
+                    execute_command(command_args, global, local, cur_path);
+                    close(write_end);
 
-                char bf[38];
-                read(read_end, bf, 38);
-                value = read_file_into_string(read_end);
-                close(read_end);
-                dup2(saved_stdout, STDOUT_FILENO);
+                    char bf[38];
+                    read(read_end, bf, 38);
+                    value = read_file_into_string(read_end);
+                    close(read_end);
+                    dup2(saved_stdout, STDOUT_FILENO);
 
-                setenv(varname.c_str(), value.c_str(), true);
+                    setenv(varname.c_str(), value.c_str(), true);
 
 
-            }else{
-                setenv(varname.c_str(), value.c_str(), true);
-            }
-            local.insert(varname);
-        }else{
-
-            std::vector<std::string> args;
-            int status = get_command_line_args(input, args);
-            if(!status){
-                if(args.empty()){
-                    std::cerr << "No valid arguments provided" << std::endl;
+                }else{
+                    setenv(varname.c_str(), value.c_str(), true);
                 }
-                else{
+                local.insert(varname);
+            }else{
 
-                    execute_command(args, global, local, cur_path);
+                std::vector<std::string> args;
+                int status = get_command_line_args(input, args);
+                if(!status){
+                    if(args.empty()){
+                        std::cerr << "No valid arguments provided" << std::endl;
+                    }
+                    else{
+
+                        execute_command(args, global, local, cur_path);
+                    }
                 }
             }
         }
