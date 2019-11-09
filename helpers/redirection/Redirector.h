@@ -17,6 +17,7 @@ public:
     Redirector(std::vector<std::string>& redirections);
     void redirect();
     void recover();
+    std::vector<int> get_redirected();
 };
 
 std::vector<int> get_redirection(std::string& redirection);

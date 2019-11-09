@@ -57,11 +57,8 @@ int main(int argc, char** argv){
                         local.insert(varname);
                     }
                     else{
-                        auto redir = redirect_output(args);
-                        Redirector r = Redirector(redir);
-                        r.redirect();
+
                         execute_command(args, global, cur_path);
-                        r.recover();
                     }
                 }
             }

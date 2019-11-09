@@ -67,3 +67,11 @@ void Redirector::recover() {
         close(entry[2]);
     }
 }
+
+std::vector<int> Redirector::get_redirected(){
+    std::vector<int> descriptors;
+    for(auto& entry:from_to){
+        descriptors.push_back(entry[0]);
+    }
+    return descriptors;
+}
