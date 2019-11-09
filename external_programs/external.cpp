@@ -79,6 +79,7 @@ void run_external(std::string& path,  std::vector<std::string>& args, std::set<s
     {
         // We are the child
         execve(path.c_str(), args_buffer, envp);
+
         std::cerr << "Parent: Failed to execute " << path << " \n\tCode: " << errno << std::endl;
         exit(EXIT_FAILURE);   // exec never returns
     }

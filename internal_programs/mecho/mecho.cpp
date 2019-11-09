@@ -38,6 +38,10 @@ void run_mecho(std::vector<std::string> args){
                 std::cout << str << std::endl;
             }
         }
+
+        std::string input;
+        std::cin >> input;
+        std::cout << input << std::endl;
         setenv("ERRNO", std::to_string(ERRNO_OK).c_str(), true);
     } catch (const docopt::DocoptArgumentError& e){
         std::cerr << "Invalid argument" << std::endl;

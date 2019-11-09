@@ -13,4 +13,5 @@ std::string get_filename(std::string& path);
 std::string get_dirname(std::string& path);
 std::vector<std::string> list_files(std::string directory);
 std::vector<std::string> filter_files(std::vector<std::string>& files_list, std::string wildcard);
+std::string read_file_into_string(int fd);
 #endif //MY_SHELL_FILESYSTEM_H

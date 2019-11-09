@@ -17,4 +17,5 @@ void between_delimiters(std::string& string, std::string delim0, std::string del
 
 
 int get_command_line_args(std::string input_line, std::vector<std::string>& result);
+
 #endif //MY_SHELL_PARSING_H

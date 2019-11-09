@@ -42,9 +42,9 @@ set(SOURCE_FILES main.cpp helpers/io/console_io.h helpers/io/console_io.cpp
         internal_programs/mexit/mexit.cpp internal_programs/mecho/mecho.cpp
         internal_programs/mexit/mexit.cpp internal_programs/mexport/mexport.cpp
         internal_programs/mexit/mexit.cpp internal_programs/mexport/mexport.h
-        )
+        helpers/execution/execution.cpp helpers/execution/execution.h helpers/redirection/redirection.cpp helpers/redirection/redirection.h helpers/redirection/Redirector.cpp helpers/redirection/Redirector.h helpers/pipe/pipe.cpp helpers/pipe/pipe.h)
 
-add_executable(myshell ${SOURCE_FILES})
+add_executable(myshell ${SOURCE_FILES} helpers/execution/execution.cpp helpers/execution/execution.h)
 
 
 target_link_libraries(myshell ${Boost_LIBRARIES})

@@ -6,7 +6,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range_core.hpp>
 #include <fnmatch.h>
-
+#include <cstdlib>
+#include <cstdio>
 
 int get_absolute_path(std::string& relative_path, std::string& current_directory, std::string& result){
     boost::filesystem::path relative(relative_path);
@@ -50,4 +51,16 @@ std::vector<std::string> filter_files(std::vector<std::string>& files_list, std:
         }
     }
     return filtered;
+}
+
+std::string read_file_into_string(int fd){
+
+    FILE *f = fdopen(fd, "r");
+    fseek(f, 0, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
+
+    char *string = (char *) malloc(fsize + 1);
+    fread(string, 1, fsize, f);
+    return std::string(string);
 }

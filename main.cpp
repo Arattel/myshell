@@ -6,11 +6,6 @@
 #include "helpers/io/console_io.h"
 #include "helpers/parsing/parsing.h"
 #include <vector>
-#include "internal_programs/mpwd/mpwd.h"
-#include "internal_programs/merrno/merrno.h"
-#include "internal_programs/mcd/mcd.h"
-#include "internal_programs/mexit/mexit.h"
-#include "internal_programs/mecho/mecho.h"
 #include "internal_programs/mexport/mexport.h"
 
 
@@ -18,10 +13,19 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <set>
+#include <zconf.h>
+#include <fcntl.h>
+#include <algorithm>
+#include <boost/algorithm/string.hpp>
 #include "helpers/my_errno_values/my_errno.h"
 #include "helpers/parsing/helpers.h"
 #include "helpers/variables/variables.h"
-#include "external_programs/external.h"
+#include "helpers/execution/execution.h"
+#include "helpers/redirection/redirection.h"
+#include "helpers/redirection/Redirector.h"
+#include "helpers/filesystem/filesystem.h"
+#include "helpers/pipe/pipe.h"
+char* readLine();
 
 int main(int argc, char** argv){
     auto cur_path = get_current_path();
@@ -37,43 +41,27 @@ int main(int argc, char** argv){
         if(strlen(buf) > 0){
             add_history(input.c_str());
         }
-        std::vector<std::string> args;
-        int status = get_command_line_args(input, args);
-        if(!status){
-            if(args.empty()){
-                std::cerr << "No valid arguments provided" << std::endl;
-            } else{
-                if(is_assignment(args[0])){
-                    std::string varname, value;
-                    split_assignment(args[0], varname, value);
-                    setenv(varname.c_str(), value.c_str(), true);
-                    local.insert(varname);
-                }
-                else if(args[0] == MERRNO){
-                    run_merrno(args);
-                } else if(args[0] == MCD){
-                    run_mcd(args, cur_path);
-                }
-                else if(args[0] == MPWD){
-                    run_mpwd(args);
-                }else if(args[0] == MEXIT){
-                    run_mexit(args);
-                } else if(args[0] ==  MECHO){
-                    run_mecho(args);
-                } else if(args[0] == MEXPORT){
-                    run_mexport(args, global);
-                }
-                else{
-                    std::string pth;
-                    if(is_local_external(args[0])){
-                        pth = path_to_local_external(args[0]);
-                        run_external(pth, args, global);
-                    } else if(is_global_external(args[0])){
-                        pth = path_to_global_external(args[0]);
-                        run_external(pth, args, global);
+        if(substring_in_string(input, "|")){
+            execute_pipe(input, global, cur_path);
+        } else{
+            std::vector<std::string> args;
+            int status = get_command_line_args(input, args);
+            if(!status){
+                if(args.empty()){
+                    std::cerr << "No valid arguments provided" << std::endl;
+                } else{
+                    if(is_assignment(args[0])){
+                        std::string varname, value;
+                        split_assignment(args[0], varname, value);
+                        setenv(varname.c_str(), value.c_str(), true);
+                        local.insert(varname);
                     }
                     else{
-                        std::cerr << "Invalid command" << std::endl;
+                        auto redir = redirect_output(args);
+                        Redirector r = Redirector(redir);
+                        r.redirect();
+                        execute_command(args, global, cur_path);
+                        r.recover();
                     }
                 }
             }
@@ -82,4 +70,3 @@ int main(int argc, char** argv){
     }
         return 0;
     }
-
